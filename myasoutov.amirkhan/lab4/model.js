@@ -62,9 +62,11 @@ export function groupPostsByCommentCount(posts) {
   return map;
 }
 
-export function getPostsByTag(posts, tag) {
+export function findPostsByTag(posts, tag) {
   return posts.filter((post) => post.tags.includes(tag));
 }
+
+export const getPostsByTag = findPostsByTag;
 
 export function getAllCommentAuthors(posts) {
   const authors = [];
