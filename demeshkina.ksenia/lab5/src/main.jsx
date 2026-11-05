@@ -92,7 +92,7 @@ function Slider() {
             key={item.id}
             className={index === current ? 'dot active' : 'dot'}
             onClick={() => setCurrent(index)}
-            data-testid="slide-dot"
+            data-testid="slide-page"
           ></button>
         ))}
       </div>
