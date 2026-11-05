@@ -48,10 +48,14 @@ function saveMovies() {
 let movieList = loadMovies();
 
 function runAsync(action) {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     setTimeout(() => {
-      action();
-      resolve();
+      try {
+        action();
+        resolve();
+      } catch (error) {
+        reject(error);
+      }
     }, 500);
   });
 }
