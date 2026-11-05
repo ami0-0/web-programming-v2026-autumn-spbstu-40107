@@ -17,23 +17,23 @@ async function saveData() {
   localStorage.setItem('blogPosts', JSON.stringify(posts));
 }
 
-async function addPost(title) {
-  await delay(300);
-  const post = new BlogPost({id: Date.now(), title});
+async function addPost(id, title) {
+  await delay(100);
+  const post = new BlogPost({id: Number(id), title});
   posts.push(post);
   await saveData();
   render();
 }
 
 async function deletePost(id) {
-  await delay(300);
+  await delay(100);
   posts = posts.filter((p) => p.id !== id);
   await saveData();
   render();
 }
 
 async function addTagToPost(id, tag) {
-  await delay(300);
+  await delay(100);
   const post = posts.find((p) => p.id === id);
   if (post) {
     post.addTag(tag);
@@ -43,7 +43,7 @@ async function addTagToPost(id, tag) {
 }
 
 async function removeTagFromPost(id, tag) {
-  await delay(300);
+  await delay(100);
   const post = posts.find((p) => p.id === id);
   if (post) {
     post.removeTag(tag);
@@ -53,7 +53,7 @@ async function removeTagFromPost(id, tag) {
 }
 
 async function addCommentToPost(id, author, text) {
-  await delay(300);
+  await delay(100);
   const post = posts.find((p) => p.id === id);
   if (post) {
     post.addComment({author, text});
@@ -65,10 +65,11 @@ async function addCommentToPost(id, author, text) {
 formElement.addEventListener('submit', async (e) => {
   e.preventDefault();
   const formData = new FormData(formElement);
+  const id = formData.get('id');
   const title = formData.get('title');
-  if (title) {
+  if (title && id) {
     formElement.reset();
-    await addPost(title);
+    await addPost(id, title);
   }
 });
 
@@ -81,13 +82,7 @@ function render() {
     card.className = 'entity-card';
 
     const header = document.createElement('h3');
-    header.textContent = post.title;
-
-    const deleteBtn = document.createElement('button');
-    deleteBtn.dataset.testid = 'delete-entity';
-    deleteBtn.textContent = 'Удалить пост';
-    deleteBtn.className = 'delete-btn';
-    deleteBtn.onclick = () => deletePost(post.id);
+    header.textContent = `${post.title} (ID: ${post.id})`;
 
     const tagsHeader = document.createElement('h4');
     tagsHeader.textContent = 'Теги:';
@@ -99,6 +94,7 @@ function render() {
       tagLi.textContent = `${tag} `;
 
       const removeTagBtn = document.createElement('button');
+      removeTagBtn.type = 'button';
       removeTagBtn.textContent = 'Удалить тэг';
       removeTagBtn.className = 'small-btn';
       removeTagBtn.onclick = () => removeTagFromPost(post.id, tag);
@@ -152,6 +148,12 @@ function render() {
       e.preventDefault();
       addCommentToPost(post.id, authorInput.value, textInput.value);
     };
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.dataset.testid = 'delete-entity';
+    deleteBtn.textContent = 'Удалить пост';
+    deleteBtn.className = 'delete-btn';
+    deleteBtn.onclick = () => deletePost(post.id);
 
     card.append(
       header,

@@ -25,7 +25,7 @@ export class BlogPost {
   }
 }
 
-export function groupPostsByTags(posts) {
+export function groupPostsByTag(posts) {
   const map = new Map();
   for (const post of posts) {
     for (const tag of post.tags) {
@@ -37,6 +37,8 @@ export function groupPostsByTags(posts) {
   }
   return map;
 }
+
+export const groupPostsByTags = groupPostsByTag;
 
 export function getUniqueTags(posts) {
   const set = new Set();
