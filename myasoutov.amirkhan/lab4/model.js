@@ -84,7 +84,7 @@ export function findPostsByTag(posts, tag) {
 
 export const getPostsByTag = findPostsByTag;
 
-export function getAllCommentAuthors(posts) {
+export function getCommentAuthors(posts) {
   const authors = [];
   for (const post of posts) {
     const comments = Array.isArray(post.comments) ? post.comments : [];
@@ -102,3 +102,5 @@ export function getAllCommentAuthors(posts) {
   }
   return authors;
 }
+
+export const getAllCommentAuthors = getCommentAuthors;
