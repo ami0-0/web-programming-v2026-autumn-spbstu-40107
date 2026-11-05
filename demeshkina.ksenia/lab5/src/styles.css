@@ -1,72 +1,80 @@
 * {
-  box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 body {
-  margin: 0;
-  font-family: Arial, sans-serif;
+    margin: 0;
+    font-family: Arial, sans-serif;
 }
 
 .page {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 20px;
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 20px;
 }
 
 .page h1 {
-  text-align: center;
+    text-align: center;
 }
 
 .card {
-  display: flex;
-  gap: 20px;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
 }
 
-.card-image {
-  width: 200px;
-  height: 300px;
+.card-cover {
+    width: 200px;
+    height: 300px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    color: white;
+    font-size: 22px;
+    text-align: center;
 }
 
 .card-price {
-  font-size: 22px;
-  font-weight: bold;
+    font-size: 22px;
+    font-weight: bold;
 }
 
 .slide-text {
-  text-align: center;
-  font-style: italic;
+    text-align: center;
+    font-style: italic;
 }
 
 .controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .controls button {
-  padding: 8px 16px;
-  cursor: pointer;
+    padding: 8px 16px;
+    cursor: pointer;
 }
 
 .pagination {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 15px;
 }
 
 .dot {
-  width: 14px;
-  height: 14px;
-  border: none;
-  border-radius: 50%;
-  background: lightgray;
-  cursor: pointer;
+    width: 14px;
+    height: 14px;
+    border: none;
+    border-radius: 50%;
+    background: lightgray;
+    cursor: pointer;
 }
 
 .dot.active {
-  background: black;
+    background: black;
 }
