@@ -2,18 +2,33 @@ export class BlogPost {
   constructor({id, title, tags = [], comments = []}) {
     this.id = id;
     this.title = title;
-    this.tags = [...tags];
-    this.comments = comments.map((c) => ({...c}));
+    this.tags = Array.isArray(tags) ? [...tags] : [];
+    this.comments = Array.isArray(comments)
+      ? comments.map((c) => ({...c}))
+      : [];
   }
 
   addTag(tag) {
-    if (!this.tags.includes(tag)) {
+    const hasTag = this.tags.some((t) =>
+      typeof t === 'object' && t !== null && 'name' in t
+        ? t.name === (typeof tag === 'object' && tag !== null ? tag.name : tag)
+        : t === tag,
+    );
+    if (!hasTag) {
       this.tags.push(tag);
     }
   }
 
   removeTag(tag) {
-    this.tags = this.tags.filter((t) => t !== tag);
+    this.tags = this.tags.filter((t) => {
+      const tagName =
+        typeof t === 'object' && t !== null && 'name' in t ? t.name : t;
+      const targetName =
+        typeof tag === 'object' && tag !== null && 'name' in tag
+          ? tag.name
+          : tag;
+      return tagName !== targetName;
+    });
   }
 
   addComment(comment) {
@@ -25,14 +40,23 @@ export class BlogPost {
   }
 }
 
+function extractTagName(tag) {
+  if (typeof tag === 'object' && tag !== null && 'name' in tag) {
+    return tag.name;
+  }
+  return String(tag);
+}
+
 export function groupPostsByTag(posts) {
   const map = new Map();
   for (const post of posts) {
-    for (const tag of post.tags) {
-      if (!map.has(tag)) {
-        map.set(tag, []);
+    const tags = Array.isArray(post.tags) ? post.tags : [];
+    for (const tag of tags) {
+      const key = extractTagName(tag);
+      if (!map.has(key)) {
+        map.set(key, []);
       }
-      map.get(tag).push(post);
+      map.get(key).push(post);
     }
   }
   return map;
@@ -43,8 +67,9 @@ export const groupPostsByTags = groupPostsByTag;
 export function getUniqueTags(posts) {
   const set = new Set();
   for (const post of posts) {
-    for (const tag of post.tags) {
-      set.add(tag);
+    const tags = Array.isArray(post.tags) ? post.tags : [];
+    for (const tag of tags) {
+      set.add(extractTagName(tag));
     }
   }
   return set;
@@ -53,7 +78,7 @@ export function getUniqueTags(posts) {
 export function groupPostsByCommentCount(posts) {
   const map = new Map();
   for (const post of posts) {
-    const count = post.comments.length;
+    const count = post.comments ? post.comments.length : 0;
     if (!map.has(count)) {
       map.set(count, []);
     }
@@ -63,7 +88,11 @@ export function groupPostsByCommentCount(posts) {
 }
 
 export function findPostsByTag(posts, tag) {
-  return posts.filter((post) => post.tags.includes(tag));
+  const targetTag = extractTagName(tag);
+  return posts.filter((post) => {
+    const tags = Array.isArray(post.tags) ? post.tags : [];
+    return tags.some((t) => extractTagName(t) === targetTag);
+  });
 }
 
 export const getPostsByTag = findPostsByTag;
@@ -71,8 +100,17 @@ export const getPostsByTag = findPostsByTag;
 export function getAllCommentAuthors(posts) {
   const authors = [];
   for (const post of posts) {
-    for (const comment of post.comments) {
-      authors.push(comment.author);
+    const comments = Array.isArray(post.comments) ? post.comments : [];
+    for (const comment of comments) {
+      if (
+        typeof comment === 'object' &&
+        comment !== null &&
+        'author' in comment
+      ) {
+        authors.push(comment.author);
+      } else {
+        authors.push(comment);
+      }
     }
   }
   return authors;
