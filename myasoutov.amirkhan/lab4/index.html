@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Лабораторная работа 4</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <h1>Лабораторная работа 4</h1>
+
+      <form data-testid="entity-form" class="entity-form">
+        <label>
+          Заголовок поста:
+          <input type="text" name="title" required />
+        </label>
+        <button type="submit">Добавить пост</button>
+      </form>
+
+      <section
+        data-testid="entity-list"
+        class="entity-list"
+        aria-label="Список элементов"
+      ></section>
+    </main>
+
+    <script type="module" src="main.js"></script>
+  </body>
+</html>
