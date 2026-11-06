@@ -1,4 +1,4 @@
-import {StrictMode, useState} from 'react';
+import React, {StrictMode, useState} from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
 
@@ -27,7 +27,7 @@ const books = [
     id: 3,
     title: 'Граф Монте-Кристо',
     text: 'Новинка в нашей подборке',
-    image: 'https://placehold.co/200x300?text=Duke',
+    color: '#2a852aff',
     rating: 4.7,
     description:
       'Роман о мести и справедливости, в котором несправедливо осужденный моряк совершает дерзкий побег из тюрьмы.',
