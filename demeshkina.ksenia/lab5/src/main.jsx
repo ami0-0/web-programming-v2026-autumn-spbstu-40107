@@ -1,4 +1,4 @@
-import React, {StrictMode, useState} from 'react';
+import {StrictMode, useState} from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
 
@@ -37,6 +37,10 @@ const books = [
 
 function Slider() {
   const [current, setCurrent] = useState(0);
+
+  if (books.length === 0) {
+    return <p data-testid="slider-empty">Книг пока нет</p>;
+  }
 
   const book = books[current];
 
