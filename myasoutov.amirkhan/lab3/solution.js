@@ -3,7 +3,9 @@ export function findMedian(arr) {
     throw new TypeError('Все элементы массива должны быть числами');
   }
 
-  if (arr.length === 0) {return null;}
+  if (arr.length === 0) {
+    return null;
+  }
 
   const sorted = [...arr].sort((a, b) => a - b);
   const mid = Math.floor(sorted.length / 2);
