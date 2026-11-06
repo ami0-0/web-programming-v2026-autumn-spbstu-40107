@@ -1,7 +1,9 @@
 export function findMedian(arr) {
-  if (arr.length === 0) {
-    return null;
+  if (!arr.every((num) => typeof num === 'number' && !Number.isNaN(num))) {
+    throw new TypeError('Все элементы массива должны быть числами');
   }
+
+  if (arr.length === 0) {return null;}
 
   const sorted = [...arr].sort((a, b) => a - b);
   const mid = Math.floor(sorted.length / 2);
