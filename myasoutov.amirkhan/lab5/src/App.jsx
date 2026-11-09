@@ -43,7 +43,7 @@ export default function App() {
       type,
       amount: parseFloat(amount),
       category: category.trim(),
-      description: description.trim(),
+      description: (description || '').trim(),
       date: new Date().toISOString(),
     };
 
@@ -200,14 +200,14 @@ export default function App() {
         </section>
       </div>
 
-      <section className="history-section">
+      <section className="history-section" data-testid="transaction-history">
         <h2>История транзакций</h2>
         {transactions.length === 0 ? (
           <p className="empty-msg" data-testid="empty-history">
             Транзакций пока нет
           </p>
         ) : (
-          <ul className="transaction-list" data-testid="transaction-list">
+          <ul className="transaction-list">
             {transactions.map((t) => (
               <li
                 key={t.id}
