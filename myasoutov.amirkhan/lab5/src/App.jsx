@@ -1,12 +1,4 @@
 import React, {useState, useEffect, useMemo} from 'react';
-import {
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from 'recharts';
 
 const STORAGE_KEY = 'lab5_finance_data';
 const COLORS = [
@@ -25,7 +17,6 @@ export default function App() {
   const [category, setCategory] = useState('');
   const [description, setDescription] = useState('');
 
-  // Загрузка данных из localStorage при монтировании
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
@@ -37,7 +28,6 @@ export default function App() {
     }
   }, []);
 
-  // Сохранение данных при каждом изменении массива транзакций
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
   }, [transactions]);
@@ -67,7 +57,6 @@ export default function App() {
     setTransactions((prev) => prev.filter((t) => t.id !== id));
   };
 
-  // Подготовка данных для круговой диаграммы (только расходы)
   const chartData = useMemo(() => {
     const expenses = transactions.filter((t) => t.type === 'expense');
     const grouped = expenses.reduce((acc, curr) => {
@@ -78,13 +67,38 @@ export default function App() {
     return Object.entries(grouped).map(([name, value]) => ({name, value}));
   }, [transactions]);
 
+  const totalExpense = chartData.reduce((sum, item) => sum + item.value, 0);
+
   const totalIncome = transactions
     .filter((t) => t.type === 'income')
     .reduce((sum, t) => sum + t.amount, 0);
 
-  const totalExpense = transactions
-    .filter((t) => t.type === 'expense')
-    .reduce((sum, t) => sum + t.amount, 0);
+  // Расчет сегментов SVG круговой диаграммы
+  let cumulativeAngle = 0;
+  const slices = chartData.map((slice, index) => {
+    const fraction = totalExpense > 0 ? slice.value / totalExpense : 0;
+    const angle = fraction * 2 * Math.PI;
+
+    const x1 = Math.cos(cumulativeAngle);
+    const y1 = Math.sin(cumulativeAngle);
+    cumulativeAngle += angle;
+    const x2 = Math.cos(cumulativeAngle);
+    const y2 = Math.sin(cumulativeAngle);
+
+    const largeArcFlag = angle > Math.PI ? 1 : 0;
+    const pathData =
+      fraction >= 0.999
+        ? 'M 0 0 m -1, 0 a 1,1 0 1,0 2,0 a 1,1 0 1,0 -2,0'
+        : `M 0 0 L ${x1} ${y1} A 1 1 0 ${largeArcFlag} 1 ${x2} ${y2} Z`;
+
+    return {
+      name: slice.name,
+      value: slice.value,
+      color: COLORS[index % COLORS.length],
+      pathData,
+      percent: Math.round(fraction * 100),
+    };
+  });
 
   return (
     <main data-testid="app" className="app-container">
@@ -141,30 +155,31 @@ export default function App() {
 
         <section className="chart-section">
           <h2>Структура расходов</h2>
-          {chartData.length > 0 ? (
-            <div className="chart-container">
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={chartData}
-                    dataKey="value"
-                    nameKey="name"
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={100}
-                    label
-                  >
-                    {chartData.map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={COLORS[index % COLORS.length]}
-                      />
-                    ))}
-                  </Pie>
-                  <Tooltip formatter={(value) => `${value} ₽`} />
-                  <Legend />
-                </PieChart>
-              </ResponsiveContainer>
+          {slices.length > 0 ? (
+            <div className="chart-wrapper">
+              <svg viewBox="-1.2 -1.2 2.4 2.4" className="pie-svg">
+                {slices.map((slice) => (
+                  <path
+                    key={slice.name}
+                    d={slice.pathData}
+                    fill={slice.color}
+                  />
+                ))}
+              </svg>
+              <div className="chart-legend">
+                {slices.map((slice) => (
+                  <div key={slice.name} className="legend-row">
+                    <span
+                      className="legend-badge"
+                      style={{backgroundColor: slice.color}}
+                    />
+                    <span className="legend-label">
+                      {slice.name} ({slice.percent}%):
+                    </span>
+                    <strong className="legend-val">{slice.value} ₽</strong>
+                  </div>
+                ))}
+              </div>
             </div>
           ) : (
             <p className="empty-msg">Нет данных о расходах для диаграммы</p>
@@ -196,6 +211,7 @@ export default function App() {
                     {t.amount} ₽
                   </span>
                   <button
+                    type="button"
                     onClick={() => handleDelete(t.id)}
                     className="delete-btn"
                   >
