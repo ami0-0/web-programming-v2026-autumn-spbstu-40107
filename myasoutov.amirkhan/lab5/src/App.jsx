@@ -33,16 +33,20 @@ export default function App() {
   }, [transactions]);
 
   const handleAddTransaction = (e) => {
-    e.preventDefault();
-    if (!amount || !category) {
+    if (e && e.preventDefault) {
+      e.preventDefault();
+    }
+
+    const parsedAmount = parseFloat(amount);
+    if (Number.isNaN(parsedAmount) || parsedAmount <= 0) {
       return;
     }
 
     const newTransaction = {
       id: crypto.randomUUID(),
-      type,
-      amount: parseFloat(amount),
-      category: category.trim(),
+      type: type || 'expense',
+      amount: parsedAmount,
+      category: (category || 'Без категории').trim(),
       description: (description || '').trim(),
       date: new Date().toISOString(),
     };
@@ -73,7 +77,6 @@ export default function App() {
     .filter((t) => t.type === 'income')
     .reduce((sum, t) => sum + t.amount, 0);
 
-  // Расчет сегментов SVG круговой диаграммы
   let cumulativeAngle = 0;
   const slices = chartData.map((slice, index) => {
     const fraction = totalExpense > 0 ? slice.value / totalExpense : 0;
@@ -128,6 +131,7 @@ export default function App() {
             data-testid="transaction-form"
           >
             <select
+              name="type"
               value={type}
               onChange={(e) => setType(e.target.value)}
               data-testid="transaction-type"
@@ -136,37 +140,42 @@ export default function App() {
               <option value="income">Доход</option>
             </select>
             <input
+              name="amount"
               type="number"
               placeholder="Сумма"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               min="0.01"
               step="0.01"
-              required
               data-testid="transaction-amount"
             />
             <input
+              name="category"
               type="text"
-              placeholder="Категория (например, Еда, Зарплата)"
+              placeholder="Категория"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              required
               data-testid="transaction-category"
             />
             <input
+              name="description"
               type="text"
-              placeholder="Описание (необязательно)"
+              placeholder="Описание"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               data-testid="transaction-description"
             />
-            <button type="submit" data-testid="transaction-add">
+            <button
+              type="submit"
+              onClick={handleAddTransaction}
+              data-testid="transaction-add"
+            >
               Добавить
             </button>
           </form>
         </section>
 
-        <section className="chart-section">
+        <section className="chart-section" data-testid="finance-chart">
           <h2>Структура расходов</h2>
           {slices.length > 0 ? (
             <div className="chart-wrapper">
@@ -195,7 +204,9 @@ export default function App() {
               </div>
             </div>
           ) : (
-            <p className="empty-msg">Нет данных о расходах для диаграммы</p>
+            <p className="empty-msg" data-testid="empty-chart">
+              Нет данных о расходах для диаграммы
+            </p>
           )}
         </section>
       </div>
