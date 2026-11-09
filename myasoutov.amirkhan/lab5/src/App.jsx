@@ -160,7 +160,7 @@ export default function App() {
               onChange={(e) => setDescription(e.target.value)}
               data-testid="transaction-description"
             />
-            <button type="submit" data-testid="transaction-submit">
+            <button type="submit" data-testid="transaction-add">
               Добавить
             </button>
           </form>
