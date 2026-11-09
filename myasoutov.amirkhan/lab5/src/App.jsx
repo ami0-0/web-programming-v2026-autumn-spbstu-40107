@@ -122,8 +122,16 @@ export default function App() {
       <div className="content-grid">
         <section className="form-section">
           <h2>Добавить операцию</h2>
-          <form onSubmit={handleAddTransaction} className="transaction-form">
-            <select value={type} onChange={(e) => setType(e.target.value)}>
+          <form
+            onSubmit={handleAddTransaction}
+            className="transaction-form"
+            data-testid="transaction-form"
+          >
+            <select
+              value={type}
+              onChange={(e) => setType(e.target.value)}
+              data-testid="transaction-type"
+            >
               <option value="expense">Расход</option>
               <option value="income">Доход</option>
             </select>
@@ -135,6 +143,7 @@ export default function App() {
               min="0.01"
               step="0.01"
               required
+              data-testid="transaction-amount"
             />
             <input
               type="text"
@@ -142,14 +151,18 @@ export default function App() {
               value={category}
               onChange={(e) => setCategory(e.target.value)}
               required
+              data-testid="transaction-category"
             />
             <input
               type="text"
               placeholder="Описание (необязательно)"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+              data-testid="transaction-description"
             />
-            <button type="submit">Добавить</button>
+            <button type="submit" data-testid="transaction-submit">
+              Добавить
+            </button>
           </form>
         </section>
 
@@ -190,14 +203,25 @@ export default function App() {
       <section className="history-section">
         <h2>История транзакций</h2>
         {transactions.length === 0 ? (
-          <p className="empty-msg">Транзакций пока нет</p>
+          <p className="empty-msg" data-testid="empty-history">
+            Транзакций пока нет
+          </p>
         ) : (
-          <ul className="transaction-list">
+          <ul className="transaction-list" data-testid="transaction-list">
             {transactions.map((t) => (
-              <li key={t.id} className={`transaction-item ${t.type}`}>
+              <li
+                key={t.id}
+                className={`transaction-item ${t.type}`}
+                data-testid="transaction-item"
+              >
                 <div className="transaction-info">
-                  <strong>{t.category}</strong>
-                  <span className="transaction-desc">{t.description}</span>
+                  <strong data-testid="item-category">{t.category}</strong>
+                  <span
+                    className="transaction-desc"
+                    data-testid="item-description"
+                  >
+                    {t.description}
+                  </span>
                   <span className="transaction-date">
                     {new Date(t.date).toLocaleDateString('ru-RU', {
                       hour: '2-digit',
@@ -206,7 +230,10 @@ export default function App() {
                   </span>
                 </div>
                 <div className="transaction-actions">
-                  <span className="transaction-amount">
+                  <span
+                    className="transaction-amount"
+                    data-testid="item-amount"
+                  >
                     {t.type === 'income' ? '+' : '-'}
                     {t.amount} ₽
                   </span>
@@ -214,6 +241,7 @@ export default function App() {
                     type="button"
                     onClick={() => handleDelete(t.id)}
                     className="delete-btn"
+                    data-testid="delete-transaction"
                   >
                     &times;
                   </button>
